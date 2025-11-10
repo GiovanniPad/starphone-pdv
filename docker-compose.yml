@@ -1,0 +1,44 @@
+name: starphone-backend
+services:
+  api:
+    image: starphone-api
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file: ".env"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    develop:
+      watch:
+        - action: sync+restart
+          path: .
+          target: /app
+          ignore:
+            - .venv/
+            - ./src
+            - ./migrations
+        - action: rebuild
+          path: ./pyproject.toml
+    volumes:
+      - ./src:/app/src
+      - ./migrations:/app/migrations
+    working_dir: /app
+  db:
+    image: postgres:alpine
+    container_name: db
+    restart: always
+    shm_size: 128mb
+    volumes:
+      - starphone_pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=starphone
+      - POSTGRES_USER=starphone
+      - POSTGRES_PASSWORD=starphone123
+
+volumes:
+  starphone_pg_data:
