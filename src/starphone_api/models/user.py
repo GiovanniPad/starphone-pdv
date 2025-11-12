@@ -11,9 +11,14 @@ class User(SQLModel, table=True):
     salary: Decimal = Field(nullable=False)
     hiring_date: datetime = Field(nullable=False)
     resignation_date: datetime = Field(default=None, nullable=True)
-    admin: bool = Field(default=False, nullable=False) 
+    admin: bool = Field(default=False, nullable=False)
     password: str = Field(nullable=False)
+    active: bool = Field(default=True, nullable=False)
 
     @property
     def is_admin(self) -> bool:
         return self.admin
+
+    @property
+    def is_active(self) -> bool:
+        return self.active
