@@ -25,6 +25,7 @@ class UserRequest(BaseModel):
     salary: Decimal = Field(gt=Decimal("0"))
     admin: bool = False
     password: str | None = Field(default=None, min_length=8)
+    active: bool | None = Field(default=True)
 
     @field_validator("password", mode="before")
     @classmethod

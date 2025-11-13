@@ -66,13 +66,34 @@ async def update_user(*, session: ActiveSession, email: str, user: UserRequest):
     return UserResponse.model_validate(db_user)
 
 
-@router.delete("/{email}/", response_model=UserResponse)
-async def delete_user(*, session: ActiveSession, email: str):
+@router.patch("/{email}/deactivate/", response_model=UserResponse)
+async def deactivate_user(*, session: ActiveSession, email: str):
     user = session.exec(select(User).where(User.email == email)).first()
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    if not user.active:
+        raise HTTPException(
+            status_code=400, detail="Usuário já está desativado"
+        )
     user.resignation_date = datetime.now(timezone.utc)
     user.active = False
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return UserResponse.model_validate(user)
+
+
+@router.patch("/{email}/reactivate/", response_model=UserResponse)
+async def reactivate_user(*, session: ActiveSession, email: str):
+    user = session.exec(select(User).where(User.email == email)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    if user.active:
+        raise HTTPException(
+            status_code=400, detail="Usuário já está ativo"
+        )
+    user.active = True
+    user.resignation_date = None
     session.add(user)
     session.commit()
     session.refresh(user)
