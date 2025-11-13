@@ -5,6 +5,7 @@ Revises: 7d43ca224a22
 Create Date: 2025-11-12 00:40:01.940324
 
 """
+
 from datetime import datetime, timezone
 from typing import Sequence, Union
 
@@ -57,13 +58,12 @@ def upgrade() -> None:
         except IntegrityError:
             session.rollback()
 
+
 def downgrade() -> None:
     """Remove auto-created admin user."""
     bind = op.get_bind()
     with Session(bind=bind) as session:
-        admin_user = session.exec(
-            select(User).where(User.email == ADMIN_EMAIL)
-        ).first()
+        admin_user = session.exec(select(User).where(User.email == ADMIN_EMAIL)).first()
 
         if admin_user:
             session.delete(admin_user)

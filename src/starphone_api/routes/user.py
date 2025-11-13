@@ -72,9 +72,7 @@ async def deactivate_user(*, session: ActiveSession, email: str):
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     if not user.active:
-        raise HTTPException(
-            status_code=400, detail="Usuário já está desativado"
-        )
+        raise HTTPException(status_code=400, detail="Usuário já está desativado")
     user.resignation_date = datetime.now(timezone.utc)
     user.active = False
     session.add(user)
@@ -89,9 +87,7 @@ async def reactivate_user(*, session: ActiveSession, email: str):
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     if user.active:
-        raise HTTPException(
-            status_code=400, detail="Usuário já está ativo"
-        )
+        raise HTTPException(status_code=400, detail="Usuário já está ativo")
     user.active = True
     user.resignation_date = None
     session.add(user)
