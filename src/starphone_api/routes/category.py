@@ -1,11 +1,12 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 
+from starphone_api.auth import get_current_user
 from starphone_api.db import ActiveSession
 from starphone_api.models import Category
 from starphone_api.serializers.product import CategoryRequest, CategoryResponse
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 @router.post("/", response_model=CategoryResponse)

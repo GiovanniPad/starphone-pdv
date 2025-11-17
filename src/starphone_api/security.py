@@ -1,15 +1,17 @@
 from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
 pwd_context = PasswordHasher()
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verifies a hash against a password"""
-    return pwd_context.verify(hashed_password, plain_password)
+    try:
+        return pwd_context.verify(hashed_password, plain_password)
+    except VerifyMismatchError:
+        return False
 
 
 def get_password_hash(password: str) -> str:
-    """Generate a hash from plain text"""
     return pwd_context.hash(password)
 
 

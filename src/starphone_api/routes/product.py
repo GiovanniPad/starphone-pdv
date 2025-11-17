@@ -1,12 +1,13 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import selectinload
 from sqlmodel import select
 
+from starphone_api.auth import get_current_user
 from starphone_api.db import ActiveSession
 from starphone_api.models import Category, Product
 from starphone_api.serializers.product import ProductRequest, ProductResponse
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_user)])
 
 
 @router.post("/", response_model=ProductResponse)

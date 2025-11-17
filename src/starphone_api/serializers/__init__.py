@@ -1,3 +1,4 @@
+from starphone_api.serializers.auth import LoginRequest, TokenResponse
 from starphone_api.serializers.product import (
     CategoryRequest,
     CategoryResponse,
@@ -13,4 +14,6 @@ __all__ = [
     "ProductResponse",
     "CategoryRequest",
     "CategoryResponse",
+    "LoginRequest",
+    "TokenResponse",
 ]

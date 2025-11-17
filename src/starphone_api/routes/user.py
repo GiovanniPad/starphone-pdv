@@ -1,13 +1,14 @@
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 
+from starphone_api.auth import get_current_active_admin
 from starphone_api.db import ActiveSession
 from starphone_api.models import User
 from starphone_api.serializers.user import UserRequest, UserResponse
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(get_current_active_admin)])
 
 
 @router.post("/", response_model=UserResponse)
@@ -52,6 +53,7 @@ async def update_user(*, session: ActiveSession, email: str, user: UserRequest):
     db_user = session.exec(select(User).where(User.email == email)).first()
     if not db_user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    
     # hiring_date é imutável após criação
     db_user.fullname = user.fullname
     db_user.email = user.email
